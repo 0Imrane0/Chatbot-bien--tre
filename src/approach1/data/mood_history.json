@@ -1,0 +1,27 @@
+{
+  "created_at": "2025-12-30T23:16:05.270239",
+  "last_updated": "2025-12-30T23:16:20.324366",
+  "messages": [
+    {
+      "timestamp": "2025-12-30T23:16:05.270239",
+      "text": "Je suis vraiment heureux aujourd'hui !",
+      "sentiment": "positif",
+      "confidence": 0.812,
+      "score": 1.0
+    },
+    {
+      "timestamp": "2025-12-30T23:16:14.561170",
+      "text": "Je me sens un peu triste...",
+      "sentiment": "neutre",
+      "confidence": 0.555,
+      "score": 0.0
+    },
+    {
+      "timestamp": "2025-12-30T23:16:20.323885",
+      "text": "Ça va mieux maintenant, merci !",
+      "sentiment": "neutre",
+      "confidence": 0.387,
+      "score": 0.0
+    }
+  ]
+}

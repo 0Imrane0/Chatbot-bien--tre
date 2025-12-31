@@ -1,0 +1,82 @@
+# ============================================
+# CONFIGURATION DU CHATBOT DE BIEN-ÊTRE
+# ============================================
+
+# --- Approche à utiliser par défaut ---
+default_approach: "approach1"  # "approach1" ou "approach2"
+
+# --- Configuration Approche 1 (Transformers) ---
+approach1:
+  model_name: "nlptown/bert-base-multilingual-uncased-sentiment"  # Modèle BERT multilingue
+  # Alternative française : "camembert-base" ou "distilbert-base-french-cased"
+  
+  max_length: 512          # Longueur maximale des séquences
+  confidence_threshold: 0.6  # Seuil de confiance minimum
+  
+  # Langues supportées
+  languages:
+    - "fr"  # Français (prioritaire)
+    - "en"  # Anglais
+    - "ar"  # Arabe
+
+# --- Configuration Approche 2 (Custom Model) ---
+approach2:
+  # Architecture du réseau
+  max_words: 10000         # Taille du vocabulaire
+  max_length: 100          # Longueur des séquences
+  embedding_dim: 128       # Dimension des embeddings
+  lstm_units: 64           # Unités LSTM
+  
+  # Entraînement
+  epochs: 50
+  batch_size: 32
+  validation_split: 0.2
+  learning_rate: 0.001
+  early_stopping_patience: 5
+  
+  # Chemins des modèles
+  model_path: "models/approach2/sentiment_model.h5"
+  preprocessor_path: "models/approach2/preprocessor.pkl"
+
+# --- Suivi de l'humeur ---
+mood_tracking:
+  history_file: "data/mood_history.json"
+  max_history_days: 90     # Garder 3 mois d'historique
+  trend_window: 7          # Calculer les tendances sur 7 jours
+
+# --- Conversations ---
+conversations:
+  history_file: "data/conversations.json"
+  max_messages: 100        # Nombre max de messages à garder en mémoire
+  context_window: 5        # Nombre de messages précédents à considérer
+
+# --- Réponses et conseils ---
+responses:
+  avoid_repetition: true   # Éviter de répéter les mêmes réponses
+  personalization: true    # Personnaliser selon l'historique
+  max_advice_repeat: 3     # Nombre max de fois qu'un conseil peut être donné
+
+# --- Détection de crise ---
+crisis_detection:
+  enabled: true
+  keywords:
+    - "suicide"
+    - "mourir"
+    - "en finir"
+    - "me tuer"
+    - "disparaître"
+    - "plus rien"
+  emergency_contacts:
+    france: "3114"  # Numéro national de prévention du suicide
+    maroc: "0801000180"  # SOS Maroc
+
+# --- Interface ---
+ui:
+  theme: "light"           # "light" ou "dark"
+  show_stats: true         # Afficher les statistiques
+  export_enabled: true     # Permettre l'export des données
+  
+# --- Logging ---
+logging:
+  level: "INFO"            # DEBUG, INFO, WARNING, ERROR
+  file: "logs/chatbot.log"

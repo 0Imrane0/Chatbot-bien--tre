@@ -1,0 +1,45 @@
+# ============================================
+# DÉPENDANCES - APPROCHE 1 (Prioritaire)
+# ============================================
+
+# --- Deep Learning et NLP ---
+transformers==4.35.0      # Modèles pré-entraînés (BERT, RoBERTa, etc.)
+torch==2.1.0              # PyTorch - Framework deep learning
+torchvision==0.16.0       # Utilitaires pour PyTorch
+torchaudio==2.1.0         # Support audio pour PyTorch
+
+# --- Manipulation de données ---
+numpy==1.24.3             # Calculs numériques et arrays
+pandas==2.0.3             # Manipulation de données tabulaires
+scikit-learn==1.3.2       # ML classique et preprocessing
+
+# --- Traitement du langage naturel ---
+textblob==0.17.1          # Analyse de sentiment simple (backup)
+nltk==3.8.1               # Tokenization, stopwords, lemmatisation
+
+# --- Interface utilisateur ---
+streamlit==1.28.0         # Interface web interactive
+plotly==5.18.0            # Graphiques interactifs
+
+# --- Utilitaires ---
+pyyaml==6.0.1             # Lecture du fichier config.yaml
+python-dateutil==2.8.2    # Manipulation de dates
+emoji==2.8.0              # Gestion des emojis
+
+# ============================================
+# DÉPENDANCES - APPROCHE 2 (Custom Model)
+# ============================================
+# (À installer plus tard si besoin de TensorFlow)
+
+# tensorflow==2.14.0        # Alternative à PyTorch
+# keras==2.14.0             # API haut niveau pour TensorFlow
+
+# ============================================
+# DÉPENDANCES DE DÉVELOPPEMENT
+# ============================================
+
+pytest==7.4.3             # Tests unitaires
+pytest-cov==4.1.0         # Coverage des tests
+black==23.11.0            # Formatage du code
+flake8==6.1.0             # Linting
+jupyter==1.0.0            # Notebooks interactifs
