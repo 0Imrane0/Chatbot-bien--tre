@@ -39,6 +39,70 @@ class ResponseGenerator:
         print("🔧 Initialisation du Générateur de Réponses...")
         
         # ============================================
+        # DÉTECTION DE CONVERSATIONS NATURELLES
+        # ============================================
+        
+        # Salutations reconnues
+        self.greetings = [
+            'salut', 'hello', 'hi', 'bonjour', 'bonsoir', 'coucou',
+            'hey', 'yo', 'wesh', 'cc', 'slt', 'bjr', 'bsr',
+            'bonne journée', 'bonne soirée', 'good morning', 
+            'good evening', 'good afternoon'
+        ]
+        
+        # Réponses naturelles aux salutations
+        self.greeting_responses = [
+            "Salut ! 👋 Comment tu te sens aujourd'hui ?",
+            "Hey ! 😊 Comment vas-tu ? Raconte-moi ta journée !",
+            "Bonjour ! 🌟 Comment te sens-tu en ce moment ?",
+            "Coucou ! 💬 Qu'est-ce qui t'amène aujourd'hui ?",
+            "Hello ! 👋 Je suis là pour toi. Comment ça va ?",
+            "Salut ! 😊 Ça me fait plaisir de te voir ! Comment tu vas ?"
+        ]
+        
+        # Questions sur le bot
+        self.bot_questions = [
+            'qui es-tu', 'tu es qui', 'c\'est quoi', 'comment tu marches',
+            'qui t\'a créé', 'comment tu fonctionne', 'what are you',
+            'tu fais quoi', 'quel est ton nom', 'ton nom'
+        ]
+        
+        # Réponses sur le bot
+        self.bot_responses = [
+            "Je suis ton assistant de bien-être ! 🤖💙 Je suis là pour écouter comment tu te sens et t'aider à suivre ton humeur. Comment vas-tu aujourd'hui ?",
+            "Je suis un chatbot de bien-être ! 😊 Mon rôle est de t'écouter, comprendre tes émotions et te donner des conseils. Parle-moi de toi !",
+            "Je suis ici pour t'accompagner dans ton bien-être émotionnel ! 🌟 Dis-moi comment tu te sens !"
+        ]
+        
+        # Remerciements
+        self.thanks_words = [
+            'merci', 'thanks', 'thank you', 'thx', 'cool', 'super',
+            'génial', 'parfait', 'ok merci', 'merci beaucoup'
+        ]
+        
+        # Réponses aux remerciements
+        self.thanks_responses = [
+            "Avec plaisir ! 😊 Je suis là pour toi. N'hésite pas si tu veux parler !",
+            "De rien ! 💙 C'est mon rôle de t'accompagner. Comment te sens-tu maintenant ?",
+            "Je t'en prie ! 🌟 Prends soin de toi ! Tu veux continuer à discuter ?",
+            "Pas de quoi ! 😊 Je suis content de pouvoir t'aider !"
+        ]
+        
+        # Au revoir
+        self.goodbye_words = [
+            'bye', 'au revoir', 'à bientôt', 'ciao', 'salut',
+            'bonne nuit', 'à plus', 'a+', 'goodbye', 'see you'
+        ]
+        
+        # Réponses au revoir
+        self.goodbye_responses = [
+            "À bientôt ! 👋 Prends soin de toi ! 💙",
+            "Au revoir ! 😊 N'hésite pas à revenir quand tu veux !",
+            "Bonne continuation ! 🌟 Je suis là si tu as besoin !",
+            "À plus tard ! 💪 Reste positif(ve) !"
+        ]
+        
+        # ============================================
         # TEMPLATES DE RÉPONSES PAR SENTIMENT
         # ============================================
         
@@ -214,6 +278,24 @@ class ResponseGenerator:
         4. Générer conseils pertinents
         5. Éviter répétitions
         """
+        # ========================================
+        # ÉTAPE 0 : DÉTECTION CONVERSATION NATURELLE
+        # ========================================
+        
+        # Vérifier si c'est une salutation, remerciement, etc.
+        conversational_response = self._detect_conversational(text)
+        if conversational_response:
+            return {
+                'main_response': conversational_response,
+                'advice': [],
+                'encouragement': '',
+                'is_crisis': False,
+                'emergency_resources': [],
+                'is_conversational': True,  # Flag pour UI
+                'sentiment': sentiment,
+                'confidence': confidence
+            }
+        
         # Étape 1 : DÉTECTION DE CRISE
         is_crisis = self._detect_crisis(text)
         
@@ -279,6 +361,74 @@ class ResponseGenerator:
         """
         text_lower = text.lower()
         return any(keyword in text_lower for keyword in self.crisis_keywords)
+    
+    def _detect_conversational(self, text: str) -> str:
+        """
+        Détecte si le message est conversationnel (salutation, remerciement, etc.)
+        et retourne une réponse appropriée
+        
+        Args:
+            text (str): Texte de l'utilisateur
+        
+        Returns:
+            str: Réponse conversationnelle ou None si pas conversationnel
+        """
+        text_lower = text.lower().strip()
+        text_words = text_lower.split()
+        
+        # Message très court (1-3 mots) = probablement conversationnel
+        is_short = len(text_words) <= 3
+        
+        # ========================================
+        # DÉTECTION SALUTATIONS
+        # ========================================
+        for greeting in self.greetings:
+            if greeting in text_lower or text_lower == greeting:
+                return random.choice(self.greeting_responses)
+        
+        # ========================================
+        # DÉTECTION QUESTIONS SUR LE BOT
+        # ========================================
+        for question in self.bot_questions:
+            if question in text_lower:
+                return random.choice(self.bot_responses)
+        
+        # ========================================
+        # DÉTECTION REMERCIEMENTS
+        # ========================================
+        for thanks in self.thanks_words:
+            if thanks in text_lower:
+                return random.choice(self.thanks_responses)
+        
+        # ========================================
+        # DÉTECTION AU REVOIR
+        # ========================================
+        for goodbye in self.goodbye_words:
+            # "salut" peut être bonjour ou au revoir, on check le contexte
+            if goodbye == 'salut' and is_short:
+                continue  # Traité dans greetings
+            if goodbye in text_lower:
+                return random.choice(self.goodbye_responses)
+        
+        # ========================================
+        # DÉTECTION QUESTIONS SIMPLES
+        # ========================================
+        simple_questions = {
+            'ça va': "Oui ça va bien, merci ! 😊 Et toi, comment te sens-tu ?",
+            'comment vas-tu': "Je vais bien ! 🤖 Merci de demander. Et toi, comment vas-tu ?",
+            'tu vas bien': "Oui je vais très bien ! 😊 Toi alors, comment tu te sens aujourd'hui ?",
+            'comment tu vas': "Super bien ! 💙 Et toi ? Raconte-moi comment tu te sens !",
+            'quoi de neuf': "Je suis là pour toi ! 😊 Qu'est-ce qui se passe de ton côté ?",
+            'what\'s up': "Hey ! 👋 Je suis prêt à t'écouter. Comment ça va ?",
+            'sup': "Hey ! 😊 Qu'est-ce qui se passe ? Comment tu te sens ?"
+        }
+        
+        for question, response in simple_questions.items():
+            if question in text_lower:
+                return response
+        
+        # Pas de match conversationnel → traitement normal du sentiment
+        return None
     
     def _select_advice(self, sentiment_detail: str, is_crisis: bool) -> List[str]:
         """

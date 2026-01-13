@@ -528,24 +528,35 @@ def render_chat_area(analyzer: SentimentAnalyzer,
             mood_trend=mood_trend
         )
         
-        # Construire la réponse du bot
-        emoji = get_emoji_for_sentiment(sentiment_result['sentiment'])
+        # ========================================
+        # RÉPONSE CONVERSATIONNELLE (naturelle)
+        # ========================================
+        if response_data.get('is_conversational'):
+            # Réponse simple sans conseils ni analyse
+            bot_response = f"🤖 {response_data['main_response']}"
         
-        bot_response = f"{emoji} {response_data['main_response']}\n\n"
-        
-        if response_data.get('advice'):
-            advice_text = "\n".join([f"• {adv}" for adv in response_data['advice']])
-            bot_response += f"💡 **Conseils :**\n{advice_text}\n\n"
-        
-        if response_data.get('encouragement'):
-            bot_response += f"✨ {response_data['encouragement']}\n\n"
-        
-        if response_data.get('is_crisis') and response_data.get('emergency_resources'):
-            resources_text = "\n".join([f"• {res}" for res in response_data['emergency_resources']])
-            bot_response += f"🚨 **Ressources d'urgence :**\n{resources_text}\n\n"
-        
-        # Ajouter info de sentiment (discret)
-        bot_response += f"\n---\n*Sentiment détecté : {sentiment_result['sentiment']} ({sentiment_result['confidence']:.0%})*"
+        # ========================================
+        # RÉPONSE SENTIMENT (analyse complète)
+        # ========================================
+        else:
+            # Construire la réponse du bot avec analyse
+            emoji = get_emoji_for_sentiment(sentiment_result['sentiment'])
+            
+            bot_response = f"{emoji} {response_data['main_response']}\n\n"
+            
+            if response_data.get('advice'):
+                advice_text = "\n".join([f"• {adv}" for adv in response_data['advice']])
+                bot_response += f"💡 **Conseils :**\n{advice_text}\n\n"
+            
+            if response_data.get('encouragement'):
+                bot_response += f"✨ {response_data['encouragement']}\n\n"
+            
+            if response_data.get('is_crisis') and response_data.get('emergency_resources'):
+                resources_text = "\n".join([f"• {res}" for res in response_data['emergency_resources']])
+                bot_response += f"🚨 **Ressources d'urgence :**\n{resources_text}\n\n"
+            
+            # Ajouter info de sentiment (discret)
+            bot_response += f"\n---\n*Sentiment détecté : {sentiment_result['sentiment']} ({sentiment_result['confidence']:.0%})*"
         
         # Ajouter le message du bot
         st.session_state.messages.append({
