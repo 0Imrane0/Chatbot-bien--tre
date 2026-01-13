@@ -522,21 +522,27 @@ def render_chat_area(analyzer: SentimentAnalyzer,
         # Générer la réponse
         response_data = generator.generate_response(
             sentiment=sentiment_result['sentiment'],
-            score=sentiment_result['confidence'],
-            mood_trend=mood_trend,
-            user_message=prompt
+            sentiment_detail=sentiment_result['sentiment_detail'],
+            confidence=sentiment_result['confidence'],
+            text=prompt,
+            mood_trend=mood_trend
         )
         
         # Construire la réponse du bot
         emoji = get_emoji_for_sentiment(sentiment_result['sentiment'])
         
-        bot_response = f"{emoji} {response_data['response']}\n\n"
+        bot_response = f"{emoji} {response_data['main_response']}\n\n"
         
         if response_data.get('advice'):
-            bot_response += f"💡 **Conseil :** {response_data['advice']}\n\n"
+            advice_text = "\n".join([f"• {adv}" for adv in response_data['advice']])
+            bot_response += f"💡 **Conseils :**\n{advice_text}\n\n"
         
-        if response_data.get('activity'):
-            bot_response += f"🎯 **Activité suggérée :** {response_data['activity']}\n\n"
+        if response_data.get('encouragement'):
+            bot_response += f"✨ {response_data['encouragement']}\n\n"
+        
+        if response_data.get('is_crisis') and response_data.get('emergency_resources'):
+            resources_text = "\n".join([f"• {res}" for res in response_data['emergency_resources']])
+            bot_response += f"🚨 **Ressources d'urgence :**\n{resources_text}\n\n"
         
         # Ajouter info de sentiment (discret)
         bot_response += f"\n---\n*Sentiment détecté : {sentiment_result['sentiment']} ({sentiment_result['confidence']:.0%})*"

@@ -22,9 +22,10 @@ Je suis étudiant ingénieur en Ingénierie des Systèmes d'Information et Big D
 2. **Progression étape par étape** : Ne passe à l'étape suivante qu'après mon approbation
 3. **Code commenté** : Chaque ligne importante doit avoir un commentaire explicatif
 4. **Questions de compréhension** : Pose-moi des questions pour vérifier ma compréhension
-5. **Deux implémentations complètes** : 
-   - Approche 1 avec modèle pré-entraîné (prioritaire)
-   - Approche 2 avec modèle custom (ensuite)
+5. **Trois implémentations complètes** : 
+   - **Approche 1** : Modèle pré-entraîné BERT (Feature Extraction) - ✅ COMPLÉTÉE
+   - **Approche 3** : Fine-tuning de BERT sur données bien-être - À FAIRE (prioritaire)
+   - **Approche 2** : Modèle custom LSTM/GRU - À FAIRE (ensuite)
 
 ### Format de réponse attendu :
 
@@ -65,33 +66,51 @@ chatbot-bien-etre/
 │   └── training_data.csv          # Données d'entraînement (Approche 2)
 │
 ├── models/                        # Modèles sauvegardés
-│   ├── approach1/                 # Modèle pré-entraîné
-│   └── approach2/                 # Modèle custom
-│       ├── sentiment_model.h5
+│   ├── approach1/                 # Approche 1 : Pré-entraîné
+│   │   └── bert_pretrained/       # BERT original (HuggingFace)
+│   ├── approach3/                 # Approche 3 : Fine-tuning BERT
+│   │   └── bert_finetuned/        # BERT ajusté sur données bien-être
+│   └── approach2/                 # Approche 2 : Custom model
+│       ├── lstm_model.h5
 │       └── preprocessor.pkl
 │
 ├── src/                           # Code source
 │   ├── __init__.py
-│   ├── approach1/                 # Approche 1
+│   ├── approach1/                 # Approche 1 : Feature Extraction (✅ COMPLÉTÉE)
 │   │   ├── __init__.py
-│   │   ├── sentiment_analyzer.py  # Analyse avec transformers
+│   │   ├── sentiment_analyzer.py  # Utilise BERT pré-entraîné (gelé)
 │   │   ├── mood_tracker.py        # Suivi de l'humeur
 │   │   ├── response_generator.py  # Génération de réponses
-│   │   └── chatbot.py             # Logique principale
+│   │   ├── chatbot.py             # Logique principale
+│   │   └── data/
+│   │       └── mood_history.json  # Historique utilisateur
 │   │
-│   └── approach2/                 # Approche 2
+│   ├── approach3/                 # Approche 3 : Fine-tuning BERT (À FAIRE)
+│   │   ├── __init__.py
+│   │   ├── sentiment_finetuner.py # Entraînement de BERT
+│   │   ├── sentiment_analyzer.py  # Analyse avec BERT fine-tuné
+│   │   ├── mood_tracker.py        # Suivi de l'humeur (réutilisé)
+│   │   ├── response_generator.py  # Génération de réponses (réutilisé)
+│   │   ├── chatbot.py             # Logique principale
+│   │   └── data/
+│   │       └── training_wellbeing_data.json  # Données pour fine-tuning
+│   │
+│   └── approach2/                 # Approche 2 : Custom LSTM/GRU (À FAIRE)
 │       ├── __init__.py
 │       ├── data_preparation.py    # Préparation des données
-│       ├── model_builder.py       # Construction du réseau
+│       ├── model_builder.py       # Construction du réseau LSTM
 │       ├── model_trainer.py       # Entraînement
-│       ├── sentiment_analyzer.py  # Analyse custom
-│       ├── mood_tracker.py        # Suivi de l'humeur
-│       ├── response_generator.py  # Génération de réponses
-│       └── chatbot.py             # Logique principale
+│       ├── sentiment_analyzer.py  # Analyse avec modèle custom
+│       ├── mood_tracker.py        # Suivi de l'humeur (réutilisé)
+│       ├── response_generator.py  # Génération de réponses (réutilisé)
+│       ├── chatbot.py             # Logique principale
+│       └── data/
+│           └── training_data.csv  # Données pour entraînement
 │
 ├── tests/                         # Tests unitaires
-│   ├── test_approach1.py
-│   └── test_approach2.py
+│   ├── test_approach1.py          # Tests Approche 1 (✅ 23 TESTS PASSANTS)
+│   ├── test_approach3.py          # Tests Approche 3 (À FAIRE)
+│   └── test_approach2.py          # Tests Approche 2 (À FAIRE)
 │
 ├── notebooks/                     # Jupyter notebooks (exploration)
 │   ├── 01_exploration_data.ipynb
