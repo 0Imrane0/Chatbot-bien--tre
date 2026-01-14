@@ -11,11 +11,12 @@
 
 ## 🚀 Démarrage Ultra-Rapide
 
-### Windows (2 clics)
+### Windows (3 étapes)
 
-1. **Double-clique** sur `launch_interface.bat`
-2. Le navigateur s'ouvre sur `http://localhost:8502`
-3. **C'est prêt !** Commence à chatter 💬
+1. **Double-clique** sur `download_models.bat` (télécharge le modèle)
+   - ⏳ Attendre 10-15 minutes (650 MB)
+2. **Double-clique** sur `launch_interface.bat` (lance le chatbot)
+3. **Le navigateur s'ouvre** sur `http://localhost:8502` 💬
 
 ### Première Installation ?
 
@@ -23,13 +24,22 @@
 
 ```bash
 # Résumé rapide :
-python -m venv .venv              # Créer environnement
+python -m venv .venv              # Créer environnement virtuel
 .venv\Scripts\activate            # Activer (Windows)
 pip install -r requirements.txt   # Installer dépendances
-launch_interface.bat              # Lancer !
+download_models.bat               # Télécharger le modèle ⏳
+launch_interface.bat              # Lancer l'interface !
 ```
 
-**C'est tout!** ✨
+---
+
+## ⚠️ Important : Télécharger les Modèles
+
+Les modèles BERT sont **trop volumineux pour GitHub** (638 MB > 100 MB limit).
+
+👉 **Tu DOIS exécuter `download_models.bat`** ou `python download_models.py` avant de lancer l'interface !
+
+📖 [Guide complet du téléchargement](DOWNLOAD_MODELS.md)
 
 ---
 
