@@ -18,9 +18,14 @@ data/*.json
 data/*.csv
 logs/*.log
 
-# Modèles (peuvent être lourds)
-models/approach2/*.h5
-models/approach2/*.pkl
+# Modèles (fichiers volumineux - trop lourds pour GitHub)
+models/approach3/bert_finetuned/
+models/approach1/
+models/approach2/
+# Mais garder la structure de dossiers
+!models/
+!models/approach3/
+!models/.gitkeep
 
 # IDE
 .vscode/

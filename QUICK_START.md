@@ -49,9 +49,25 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-⏳ **Temps estimé** : 5-10 minutes (télécharge ~2 Go de modèles)
+⏳ **Temps estimé** : 5-10 minutes (télécharge ~2 Go de dépendances)
 
-### Étape 5 : Télécharger les données NLTK (optionnel)
+### Étape 5 : Télécharger les modèles BERT
+
+**⚠️ IMPORTANT** : Les modèles sont trop volumineux pour GitHub (638 MB), donc ils sont téléchargés séparément.
+
+```bash
+# Option 1 : Double-clic sur download_models.bat (Windows)
+download_models.bat
+
+# Option 2 : Ligne de commande
+python download_models.py
+```
+
+⏳ **Temps estimé** : 10-15 minutes (télécharge 650 MB depuis Hugging Face)
+
+> 💡 Cela ne se fait qu'une seule fois au premier lancement
+
+### Étape 6 : Télécharger les données NLTK (optionnel)
 
 ```bash
 python setup_nltk.py
