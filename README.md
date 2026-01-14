@@ -1,20 +1,32 @@
 # 🤖 Chatbot de Bien-Être avec IA Avancée
 
-> **Chatbot intelligent combinant BERT fine-tuning et Thérapie Cognitivo-Comportementale (CBT) pour aider véritablement les utilisateurs**
+> **Chatbot intelligent combinant BERT fine-tuning et Thérapie Cognitivo-Comportementale (CBT)**
 
-## ⚡ Démarrage Rapide
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
+[![BERT](https://img.shields.io/badge/Model-BERT%20110M-orange.svg)](https://huggingface.co)
+[![Precision](https://img.shields.io/badge/Precision-85%25-green.svg)]()
+[![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red.svg)](https://streamlit.io)
+
+---
+
+## 🚀 Démarrage Ultra-Rapide
+
+### Windows (2 clics)
+
+1. **Double-clique** sur `launch_interface.bat`
+2. Le navigateur s'ouvre sur `http://localhost:8502`
+3. **C'est prêt !** Commence à chatter 💬
+
+### Première Installation ?
+
+📖 **Lis le guide complet** : [QUICK_START.md](QUICK_START.md)
 
 ```bash
-# 1. Cloner/télécharger le projet
-cd Chatbot\ bien-être
-
-# 2. Installer les dépendances
-pip install -r requirements.txt
-
-# 3. Lancer le menu principal
-menu.bat
-
-# 4. Choisir une option (1 pour chatbot)
+# Résumé rapide :
+python -m venv .venv              # Créer environnement
+.venv\Scripts\activate            # Activer (Windows)
+pip install -r requirements.txt   # Installer dépendances
+launch_interface.bat              # Lancer !
 ```
 
 **C'est tout!** ✨
