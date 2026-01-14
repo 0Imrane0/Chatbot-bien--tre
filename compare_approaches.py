@@ -1,124 +1,168 @@
 """
-📊 Comparaison : Feature Extraction vs Fine-tuning
-===================================================
+📊 Comparaison : Approche 1 vs Approche 3
+==========================================
 
 Ce script compare les deux approches :
-1. Feature Extraction : Utilisation de BERT pré-entraîné tel quel
-2. Fine-tuning : BERT ajusté sur nos données
+1. Approche 1 : Feature Extraction (BERT gelé)
+2. Approche 3 : Fine-tuning BERT
 
 Auteur : Étudiant ENSA Berrechid
 """
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.dirname(__file__))
 
-from src.approach1.sentiment_analyzer import SentimentAnalyzer
-from src.approach1.sentiment_finetuner import BERTFineTuner, create_sample_dataset
+from src.approach1.sentiment_analyzer import SentimentAnalyzer as Analyzer1
+from typing import List, Dict
+import json
 import time
 import pandas as pd
 
 
 def compare_approaches():
     """
-    Compare Feature Extraction vs Fine-tuning.
+    Compare Approche 1 vs Approche 3
     """
     print("\n" + "=" * 70)
-    print("📊 COMPARAISON : FEATURE EXTRACTION VS FINE-TUNING")
+    print("📊 COMPARAISON : APPROCHE 1 vs APPROCHE 3")
     print("=" * 70)
     print()
     
     # Phrases de test
     test_phrases = [
-        "Je me sens incroyablement bien aujourd'hui !",
-        "La méditation m'aide énormément",
-        "J'ai du mal à dormir",
-        "Je me sens complètement désespéré",
-        "Il fait beau dehors",
-        "Mon anxiété revient souvent",
-        "Je suis fier d'avoir surmonté mes peurs",
-        "Je me sens fatigué et démotivé"
+        "Je suis heureux!",
+        "Je me sens déprimé",
+        "Comment ça va?",
+        "Je ne veux plus continuer",
+        "C'est magnifique!",
+        "Je suis très stressé",
+        "Tout va bien",
+        "Je suis désespéré",
     ]
     
     # ========================================
     # APPROCHE 1 : FEATURE EXTRACTION
     # ========================================
     
-    print("⚡ APPROCHE 1 : FEATURE EXTRACTION")
+    print("🟢 APPROCHE 1 : FEATURE EXTRACTION (BERT gelé)")
     print("-" * 70)
-    print("   Utilisation de BERT pré-entraîné tel quel (pas de fine-tuning)")
+    print("   Utilisation de BERT pré-entraîné sans modification")
     print()
     
-    # Charger l'analyseur actuel
-    feature_analyzer = SentimentAnalyzer()
-    
-    # Tester et mesurer le temps
-    start_time = time.time()
-    feature_results = []
+    analyzer1 = Analyzer1()
+    approach1_times = []
+    approach1_results = []
     
     for phrase in test_phrases:
-        result = feature_analyzer.analyze(phrase)
-        feature_results.append({
-            'text': phrase,
-            'sentiment': result['sentiment'],
-            'confidence': result['confidence']
-        })
+        start = time.time()
+        result = analyzer1.analyze(phrase)
+        elapsed = time.time() - start
+        approach1_times.append(elapsed)
+        approach1_results.append(result)
+        
+        print(f"   '{phrase}'")
+        print(f"   → {result['sentiment']:10s} ({result['confidence']:.1%}) [{elapsed:.3f}s]")
     
-    feature_time = time.time() - start_time
-    
-    print("✅ Feature Extraction terminée")
-    print(f"⏱️  Temps total : {feature_time:.3f}s")
-    print(f"⏱️  Temps moyen par phrase : {feature_time/len(test_phrases):.3f}s")
+    print()
+    print(f"⏱️  Temps moyen: {sum(approach1_times)/len(approach1_times):.4f}s")
     print()
     
     # ========================================
-    # APPROCHE 2 : FINE-TUNING
+    # APPROCHE 3 : FINE-TUNING
     # ========================================
     
-    print("\n🎯 APPROCHE 2 : FINE-TUNING")
+    print()
+    print("🔥 APPROCHE 3 : FINE-TUNING BERT")
     print("-" * 70)
-    print("   BERT ajusté sur données de bien-être mental")
-    print()
     
-    # Vérifier si un modèle fine-tuné existe
-    finetuned_path = './models/finetuned_wellbeing'
-    
-    if not os.path.exists(finetuned_path):
-        print("⚠️  Modèle fine-tuné non trouvé. Création en cours...")
+    try:
+        from src.approach3.sentiment_analyzer import SentimentAnalyzer as Analyzer3
+        
+        print("   Utilisation de BERT fine-tuné sur données bien-être")
         print()
         
-        # Créer et entraîner
-        texts, labels = create_sample_dataset()
-        finetuner = BERTFineTuner(output_dir=finetuned_path)
-        train_dataset, val_dataset = finetuner.prepare_data(texts, labels)
-        finetuner.train(train_dataset, val_dataset, epochs=2, batch_size=4)
-    else:
-        print("📥 Chargement du modèle fine-tuné existant...")
-        finetuner = BERTFineTuner(output_dir=finetuned_path)
-        finetuner.load_finetuned_model(finetuned_path)
+        analyzer3 = Analyzer3()
+        approach3_times = []
+        approach3_results = []
+        
+        for phrase in test_phrases:
+            start = time.time()
+            result = analyzer3.analyze(phrase)
+            elapsed = time.time() - start
+            approach3_times.append(elapsed)
+            approach3_results.append(result)
+            
+            print(f"   '{phrase}'")
+            print(f"   → {result['sentiment']:10s} ({result['confidence']:.1%}) [{elapsed:.3f}s]")
+        
+        print()
+        print(f"⏱️  Temps moyen: {sum(approach3_times)/len(approach3_times):.4f}s")
+        
+        # ========================================
+        # COMPARAISON STATISTIQUE
+        # ========================================
+        
+        print("\n" + "=" * 70)
+        print("📊 RÉSUMÉ COMPARATIF")
+        print("=" * 70)
+        print()
+        
+        agreement = sum(
+            1 for r1, r3 in zip(approach1_results, approach3_results)
+            if r1['sentiment'] == r3['sentiment']
+        )
+        
+        print(f"Total de tests: {len(test_phrases)}")
+        print(f"Accord Approche 1/3: {agreement}/{len(test_phrases)} ({agreement/len(test_phrases)*100:.1f}%)")
+        print()
+        
+        # Sauvegarder le rapport
+        report = {
+            'total_tests': len(test_phrases),
+            'agreement': agreement,
+            'agreement_rate': agreement / len(test_phrases),
+            'results': [
+                {
+                    'phrase': phrase,
+                    'approach1': {'sentiment': r1['sentiment'], 'confidence': r1['confidence']},
+                    'approach3': {'sentiment': r3['sentiment'], 'confidence': r3['confidence']},
+                    'agreement': r1['sentiment'] == r3['sentiment']
+                }
+                for phrase, r1, r3 in zip(test_phrases, approach1_results, approach3_results)
+            ]
+        }
+        
+        with open('data/comparison_report.json', 'w', encoding='utf-8') as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+        
+        print("✅ Rapport sauvegardé: data/comparison_report.json")
+        
+        # Retourner tous les résultats nécessaires
+        feature_results = approach1_results
+        finetuned_results = approach3_results
+        feature_time = sum(approach1_times)
+        finetuned_time = sum(approach3_times)
+        
+        return test_phrases, feature_results, finetuned_results, feature_time, finetuned_time
+        
+    except FileNotFoundError as e:
+        print(f"❌ Approche 3 non disponible")
+        print(f"   {e}")
+        print()
+        print("   Pour faire le fine-tuning:")
+        print("   python src/approach3/train_finetuner.py")
+        return None
+
+
+if __name__ == '__main__':
+    results = compare_approaches()
     
-    # Tester et mesurer le temps
-    start_time = time.time()
-    finetuned_results = []
+    if results is None:
+        sys.exit(1)
     
-    for phrase in test_phrases:
-        result = finetuner.predict(phrase)
-        finetuned_results.append({
-            'text': phrase,
-            'sentiment': result['sentiment'],
-            'confidence': result['confidence']
-        })
+    test_phrases, feature_results, finetuned_results, feature_time, finetuned_time = results
     
-    finetuned_time = time.time() - start_time
-    
-    print()
-    print("✅ Fine-tuning terminé")
-    print(f"⏱️  Temps total : {finetuned_time:.3f}s")
-    print(f"⏱️  Temps moyen par phrase : {finetuned_time/len(test_phrases):.3f}s")
-    print()
-    
-    # ========================================
-    # COMPARAISON DES RÉSULTATS
     # ========================================
     
     print("\n" + "=" * 70)

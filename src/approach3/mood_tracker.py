@@ -36,7 +36,7 @@ class MoodTracker:
     - save/load : Sauvegarde et chargement depuis JSON
     """
     
-    def __init__(self, history_file: str = None):
+    def __init__(self, history_file: str = "data/mood_history.json"):
         """
         Initialise le tracker d'humeur
         
@@ -48,11 +48,6 @@ class MoodTracker:
         2. Charger l'historique existant (s'il existe)
         3. Initialiser les structures de données
         """
-        # Si pas de chemin fourni, utiliser le chemin par défaut
-        if history_file is None:
-            project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-            history_file = os.path.join(project_root, 'data', 'mood_history.json')
-        
         self.history_file = history_file
         self.mood_history = []  # Liste des sentiments
         
@@ -334,9 +329,7 @@ class MoodTracker:
         """
         try:
             # Créer le dossier parent s'il n'existe pas
-            dir_path = os.path.dirname(self.history_file)
-            if dir_path and not os.path.exists(dir_path):
-                os.makedirs(dir_path, exist_ok=True)
+            os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
             
             # Préparer les données
             data = {

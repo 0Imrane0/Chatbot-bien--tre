@@ -1,0 +1,34 @@
+{
+  "created_at": "2026-01-14T19:38:14.546485",
+  "last_updated": "2026-01-14T19:38:14.712917",
+  "messages": [
+    {
+      "timestamp": "2026-01-14T19:38:14.546485",
+      "text": "Je suis triste",
+      "sentiment": "negatif",
+      "confidence": 0.4054705500602722,
+      "score": 0.4054705500602722
+    },
+    {
+      "timestamp": "2026-01-14T19:38:14.600903",
+      "text": "Je suis complètement nul, je rate toujours tout",
+      "sentiment": "negatif",
+      "confidence": 0.3951876163482666,
+      "score": 0.3951876163482666
+    },
+    {
+      "timestamp": "2026-01-14T19:38:14.653150",
+      "text": "Tout le monde pense que je suis incompétent",
+      "sentiment": "negatif",
+      "confidence": 0.36226579546928406,
+      "score": 0.36226579546928406
+    },
+    {
+      "timestamp": "2026-01-14T19:38:14.712894",
+      "text": "J'aime cette journée, c'est formidable!",
+      "sentiment": "positif",
+      "confidence": 0.9006528854370117,
+      "score": 0.9006528854370117
+    }
+  ]
+}
