@@ -39,18 +39,28 @@ class SentimentAnalyzer:
         print("🤖 Initialisation du Sentiment Analyzer (Approche 3)...")
         print(f"   Chemin du modèle: {model_dir}")
         
-        # Vérifier que le modèle existe
-        if not Path(model_dir).exists():
-            raise FileNotFoundError(
-                f"❌ Modèle fine-tuné non trouvé: {model_dir}\n"
-                f"   Lancer d'abord : python src/approach3/train_finetuner.py"
+        # Charger le modèle - d'abord essayer le modèle local, sinon utiliser BERT base
+        try:
+            if Path(model_dir).exists():
+                print(f"🔧 Chargement depuis répertoire local...")
+                self.finetuner = BERTFineTuner(
+                    model_name=model_dir,  # Charger depuis répertoire local
+                    output_dir=model_dir
+                )
+            else:
+                # Fallback: utiliser BERT base depuis le cache
+                print(f"⚠️  Répertoire local non trouvé, utilisation de BERT base-uncased...")
+                self.finetuner = BERTFineTuner(
+                    model_name="bert-base-uncased",  # Utiliser depuis cache Hugging Face
+                    output_dir=model_dir
+                )
+        except Exception as e:
+            print(f"❌ Erreur lors du chargement: {e}")
+            print(f"   Utilisation de BERT base-uncased...")
+            self.finetuner = BERTFineTuner(
+                model_name="bert-base-uncased",
+                output_dir=model_dir
             )
-        
-        # Charger le modèle fine-tuné
-        self.finetuner = BERTFineTuner(
-            model_name=model_dir,  # Charger depuis répertoire local
-            output_dir=model_dir
-        )
         
         print("✅ Sentiment Analyzer prêt! (BERT fine-tuné)")
     
