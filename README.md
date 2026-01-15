@@ -11,35 +11,69 @@
 
 ## 🚀 Démarrage Ultra-Rapide
 
-### Windows (3 étapes)
+### ⚡ Windows (3 clics)
 
-1. **Double-clique** sur `download_models.bat` (télécharge le modèle)
-   - ⏳ Attendre 10-15 minutes (650 MB)
-2. **Double-clique** sur `launch_interface.bat` (lance le chatbot)
-3. **Le navigateur s'ouvre** sur `http://localhost:8502` 💬
-
-### Première Installation ?
-
-📖 **Lis le guide complet** : [QUICK_START.md](QUICK_START.md)
-
-```bash
-# Résumé rapide :
-python -m venv .venv              # Créer environnement virtuel
-.venv\Scripts\activate            # Activer (Windows)
-pip install -r requirements.txt   # Installer dépendances
-download_models.bat               # Télécharger le modèle ⏳
-launch_interface.bat              # Lancer l'interface !
 ```
+1️⃣ setup.bat              → Créé l'environnement et installe tout
+2️⃣ download_models.bat    → Télécharge le modèle BERT
+3️⃣ launch_interface.bat   → Lance le chatbot !
+```
+
+**C'est tout !** Le navigateur s'ouvre automatiquement sur `http://localhost:8502`
+
+### ⚠️ IMPORTANT : Première Installation
+
+**Avant de lancer quoi que ce soit, tu DOIS exécuter :**
+
+```
+setup.bat ← Double-clique UNE SEULE FOIS
+```
+
+Cela crée l'environnement virtuel et installe toutes les dépendances (5-10 minutes).
+
+📖 **Plus de détails ?** Consulte [INSTALLATION.md](INSTALLATION.md)
 
 ---
 
-## ⚠️ Important : Télécharger les Modèles
+## 📥 Process Complet (Première Fois)
 
-Les modèles BERT sont **trop volumineux pour GitHub** (638 MB > 100 MB limit).
+1. **Télécharge le repo**
+   ```bash
+   git clone https://github.com/0Imrane0/Chatbot-bien--tre.git
+   cd "Chatbot bien-être"
+   ```
 
-👉 **Tu DOIS exécuter `download_models.bat`** ou `python download_models.py` avant de lancer l'interface !
+2. **Lance setup.bat** (crée l'environnement)
+   ```
+   Double-clique sur setup.bat ← ⭐ ESSENTIEL
+   ```
+   ⏳ Attendre 5-10 minutes
 
-📖 [Guide complet du téléchargement](DOWNLOAD_MODELS.md)
+3. **Lance download_models.bat** (télécharge BERT)
+   ```
+   Double-clique sur download_models.bat
+   ```
+   ⏳ Attendre 10-15 minutes
+
+4. **Lance launch_interface.bat** (démarre le chatbot)
+   ```
+   Double-clique sur launch_interface.bat
+   ```
+   🎉 Le navigateur s'ouvre automatiquement !
+
+### 🚀 Fois Suivantes
+
+Juste clique sur `launch_interface.bat` - c'est tout !
+
+---
+
+## ⚠️ Si tu as une erreur "No module named streamlit"
+
+❌ **Cause :** Tu n'as pas exécuté `setup.bat`
+
+✅ **Solution :** Double-clique sur `setup.bat` pour installer les dépendances
+
+📖 [Voir la section dépannage](INSTALLATION.md)
 
 ---
 

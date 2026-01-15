@@ -23,17 +23,58 @@ echo.
 :: Se placer dans le repertoire du script
 cd /d "%~dp0"
 
-:: Verifier si le virtual env existe
-if exist ".venv\Scripts\activate.bat" (
-    echo [INFO] Activation de l'environnement virtuel...
-    call .venv\Scripts\activate.bat
-) else (
-    echo [WARN] Environnement virtuel non trouve, utilisation de Python global
+:: VERIFICATION 1 : Vérifier que l'environnement virtuel existe
+if not exist ".venv\Scripts\activate.bat" (
+    echo.
+    echo [ERREUR] Environnement virtuel non trouve!
+    echo.
+    echo ❌ Le dossier .venv n'existe pas.
+    echo.
+    echo SOLUTION : Double-clique sur setup.bat pour installer
+    echo            les dépendances (une seule fois)
+    echo.
+    echo Puis relance launch_interface.bat
+    echo.
+    pause
+    exit /b 1
+)
+
+:: VERIFICATION 2 : Vérifier que requirements.txt existe
+if not exist "requirements.txt" (
+    echo [ERREUR] requirements.txt non trouve!
+    pause
+    exit /b 1
+)
+
+echo [INFO] Activation de l'environnement virtuel...
+call .venv\Scripts\activate.bat
+
+if errorlevel 1 (
+    echo [ERREUR] Impossible d'activer l'environnement virtuel
+    pause
+    exit /b 1
+)
+
+:: VERIFICATION 3 : Vérifier que streamlit est installé
+echo [INFO] Vérification de streamlit...
+python -m pip show streamlit >nul 2>&1
+
+if errorlevel 1 (
+    echo.
+    echo [ERREUR] Streamlit n'est pas installé!
+    echo.
+    echo Les dépendances n'ont pas été correctement installées.
+    echo.
+    echo SOLUTION : Double-clique sur setup.bat
+    echo.
+    pause
+    exit /b 1
 )
 
 echo.
 echo [INFO] Demarrage de l'interface web Streamlit...
 echo [INFO] L'interface s'ouvrira dans votre navigateur
+echo [INFO] Veuillez patienter ~5 secondes pour le chargement du modele BERT
 echo.
 echo  ========================================================
 echo.
