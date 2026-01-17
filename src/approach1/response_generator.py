@@ -331,7 +331,8 @@ class ResponseGenerator:
         # ÉTAPE CBT : ANALYSE AVEC MODULE CBT
         # ========================================
         cbt_response = None
-        if self.enable_cbt and sentiment in ['négatif', 'très négatif', 'negative']:
+        # Activer CBT aussi pour variantes sans accent
+        if self.enable_cbt and sentiment in ['négatif', 'très négatif', 'negative', 'negatif', 'tres negatif']:
             try:
                 # Générer réponse CBT
                 cbt_data = self.cbt_engine.generate_cbt_response(
@@ -412,6 +413,7 @@ class ResponseGenerator:
                         advice_list.insert(0, action)
             
             # Construire la réponse finale avec CBT
+            distortions_list = [d.get('name', d) for d in cbt_response.get('distortions', [])]
             response = {
                 'main_response': main_response,
                 'advice': advice_list[:5],  # Limiter à 5 conseils
@@ -421,7 +423,8 @@ class ResponseGenerator:
                 'sentiment': sentiment,
                 'confidence': confidence,
                 'cbt_enabled': True,
-                'distortions_detected': len(cbt_response.get('distortions', []))
+                'distortions_detected': len(distortions_list),
+                'distortions_list': distortions_list
             }
         else:
             # Construire la réponse finale sans CBT
@@ -433,7 +436,9 @@ class ResponseGenerator:
                 'emergency_resources': emergency_resources,
                 'sentiment': sentiment,
                 'confidence': confidence,
-                'cbt_enabled': False
+                'cbt_enabled': False,
+                'distortions_detected': 0,
+                'distortions_list': []
             }
         
         return response

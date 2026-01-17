@@ -28,10 +28,12 @@ from collections import Counter
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-# Import des modules - APPROCHE 3 (Fine-tuning BERT)
+# Import des modules - APPROCHE 3 (BERT + Gemini API)
+from approach3.chatbot import WellbeingChatbot
 from approach3.sentiment_analyzer import SentimentAnalyzer
-from approach1.mood_tracker import MoodTracker
-from approach1.response_generator import ResponseGenerator
+from approach3.mood_tracker import MoodTracker
+from approach3.response_generator import ResponseGenerator
+from gemini_wrapper import GeminiChatbot
 
 # ============================================================
 # CONFIGURATION DE LA PAGE
@@ -280,6 +282,20 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
     }
     
+    .cbt-card {
+        color: #92400e !important;
+    }
+
+    .cbt-card * {
+        color: #92400e !important;
+    }
+    
+    /* Force text color inside cbt-card - override global white */
+    .stApp .cbt-card,
+    .stApp .cbt-card * {
+        color: #92400e !important;
+    }
+    
     .distortion-tag {
         background: linear-gradient(135deg, #fee2e2, #fecaca);
         color: #991b1b;
@@ -299,7 +315,25 @@ st.markdown("""
         margin: 0.5rem 0;
         border-left: 4px solid #10b981;
         font-size: 0.9rem;
-        color: #065f46;
+        color: #065f46 !important;
+    }
+
+    .action-card * {
+        color: #065f46 !important;
+    }
+
+    /* Force dark text for encouragement and advice sections */
+    .stApp .action-card,
+    .stApp .action-card * {
+        color: #065f46 !important;
+    }
+
+    .cbt-card strong {
+        color: #2563eb !important;
+    }
+
+    .action-card strong {
+        color: #065f46 !important;
     }
     
     .stat-card {
@@ -394,6 +428,46 @@ st.markdown("""
         background: #1e293b !important;
     }
     
+    /* Responsive Design - Media Queries */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem !important;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem !important;
+        }
+        
+        .user-bubble, .bot-bubble {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .stat-card {
+            padding: 1rem !important;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .hero-title {
+            font-size: 1.5rem !important;
+        }
+        
+        .hero-badges {
+            flex-direction: column !important;
+        }
+        
+        .stButton > button {
+            font-size: 0.85rem !important;
+            padding: 0.6rem 1rem !important;
+        }
+    }
+    
     /* Message de bienvenue */
     .welcome-container {
         background: linear-gradient(135deg, #1e293b, #334155);
@@ -419,11 +493,20 @@ st.markdown("""
 
 @st.cache_resource
 def load_models():
-    """Charge les modèles une seule fois"""
-    analyzer = SentimentAnalyzer()
-    tracker = MoodTracker()
-    generator = ResponseGenerator(enable_cbt=True)
-    return analyzer, tracker, generator
+    """Charge les modèles une seule fois - Approche 3 avec Gemini"""
+    # Utiliser le chatbot approche 3 qui intègre Gemini
+    chatbot = WellbeingChatbot(
+        user_id='streamlit_user',
+        use_gemini=True,  # ✅ Gemini activé
+        gemini_api_key='AIzaSyA_KawZtJbvfRP_mtL4glFPIMWsFxGgi68'
+    )
+    
+    analyzer = chatbot.analyzer
+    tracker = chatbot.tracker
+    generator = chatbot.generator
+    gemini = chatbot.gemini
+    
+    return analyzer, tracker, generator, gemini
 
 def init_session_state():
     """Initialise les variables de session"""
@@ -433,8 +516,8 @@ def init_session_state():
         st.session_state.mood_history = []
         st.session_state.session_start = datetime.now()
         
-        with st.spinner("🔧 Chargement du modèle BERT fine-tuné..."):
-            st.session_state.analyzer, st.session_state.tracker, st.session_state.generator = load_models()
+        with st.spinner("🔧 Chargement du modèle BERT + Gemini API..."):
+            st.session_state.analyzer, st.session_state.tracker, st.session_state.generator, st.session_state.gemini = load_models()
 
 init_session_state()
 
@@ -468,9 +551,79 @@ def get_mood_score(sentiment):
         'positif': 0.5,
         'neutre': 0.0,
         'négatif': -0.5,
-        'très négatif': -1.0
+        'negatif': -0.5,  # Version sans accent
+        'très négatif': -1.0,
+        'tres negatif': -1.0  # Version sans accent
     }
     return scores.get(sentiment, 0.0)
+
+def generate_response_with_gemini(sentiment_result, phrase, mood_trend):
+    """Génère une réponse courte avec Gemini (fallback sur templates)"""
+    # Essayer Gemini d'abord
+    if st.session_state.gemini:
+        try:
+            gemini_result = st.session_state.gemini.generate_response(
+                user_message=phrase,
+                sentiment=sentiment_result['sentiment'],
+                sentiment_detail=sentiment_result['sentiment_detail'],
+                confidence=sentiment_result['confidence'],
+                mood_trend=mood_trend,
+                conversation_history=[]
+            )
+            
+            # Merger avec conseils et encouragements des templates
+            template_response = st.session_state.generator.generate_response(
+                sentiment=sentiment_result['sentiment'],
+                sentiment_detail=sentiment_result['sentiment_detail'],
+                confidence=sentiment_result['confidence'],
+                text=phrase,
+                mood_trend=mood_trend
+            )
+            
+            # Raccourcir la réponse principale (2 phrases max)
+            main_resp = gemini_result.get('response', 'Je suis là pour toi.')
+            parts = [p.strip() for p in main_resp.split('.') if p.strip()]
+            short_main = '. '.join(parts[:2]) + ('.' if parts[:2] else '')
+
+            # Limiter conseils et encouragement
+            advice_short = (template_response.get('advice', []) or [])[:2]
+            encouragement_short = (template_response.get('encouragement', '') or '')
+            if len(encouragement_short) > 120:
+                encouragement_short = encouragement_short[:117] + '...'
+
+            response = {
+                'main_response': short_main,
+                'advice': advice_short,
+                'encouragement': encouragement_short,
+                'distortions_detected': template_response.get('distortions_detected', 0),
+                'distortions_list': template_response.get('distortions_list', []),
+                'behavioral_actions': template_response.get('behavioral_actions', []),
+                'emergency_resources': template_response.get('emergency_resources', []),
+                'is_crisis': gemini_result.get('is_crisis', False),
+                'gemini_used': True
+            }
+            return response
+        except Exception as e:
+            print(f"⚠️ Gemini échoué, fallback sur templates: {e}")
+    
+    # Fallback sur templates
+    t_resp = st.session_state.generator.generate_response(
+            sentiment=sentiment_result['sentiment'],
+            sentiment_detail=sentiment_result['sentiment_detail'],
+            confidence=sentiment_result['confidence'],
+            text=phrase,
+            mood_trend=mood_trend
+        )
+    # Raccourcir aussi le fallback
+    main_f = t_resp.get('main_response', 'Je suis là pour toi.')
+    parts = [p.strip() for p in main_f.split('.') if p.strip()]
+    t_resp['main_response'] = '. '.join(parts[:2]) + ('.' if parts[:2] else '')
+    t_resp['advice'] = (t_resp.get('advice', []) or [])[:2]
+    enc = t_resp.get('encouragement', '') or ''
+    if len(enc) > 120:
+        enc = enc[:117] + '...'
+    t_resp['encouragement'] = enc
+    return t_resp
 
 # ============================================================
 # HEADER HERO
@@ -539,8 +692,36 @@ with col_main:
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    if msg.get('distortions'):
-                        distortions_html = " ".join([f'<span class="distortion-tag">⚠️ {d}</span>' for d in msg['distortions']])
+                    if msg.get('encouragement'):
+                        st.markdown(f"""
+                        <div class="cbt-card" style="border-color:#2563eb;">
+                            <strong style="color:#2563eb;">💪 Encouragement</strong><br>
+                            {msg['encouragement']}
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    if msg.get('advice'):
+                        advice_html = "".join([f"<div class='action-card'>💡 {a}</div>" for a in msg['advice'][:5]])
+                        st.markdown(f"<div style='margin-top:0.25rem;'>{advice_html}</div>", unsafe_allow_html=True)
+
+                    if msg.get('emergency'):
+                        emergency_html = "".join([f"<div class='cbt-card' style='border-color:#b91c1c;color:#b91c1c;'>🚨 {e}</div>" for e in msg['emergency'][:3]])
+                        st.markdown(emergency_html, unsafe_allow_html=True)
+
+                    if msg.get('distortions') or msg.get('distortions_count', 0) > 0:
+                        # Sécuriser: accepter liste ou entier
+                        dist_list = msg.get('distortions', [])
+                        dist_count = msg.get('distortions_count', 0)
+                        if isinstance(dist_list, int):
+                            dist_count = dist_list
+                            dist_list = []
+                        if not dist_count:
+                            dist_count = len(dist_list)
+                        # Construire HTML: tags si noms disponibles, sinon badge de nombre détecté
+                        if dist_list:
+                            distortions_html = " ".join([f'<span class="distortion-tag">⚠️ {d}</span>' for d in dist_list])
+                        else:
+                            distortions_html = f'<span class="distortion-tag">⚠️ {dist_count} détectée(s)</span>'
                         st.markdown(f"""
                         <div class="cbt-card">
                             <strong style="color: #92400e;">💭 Distorsions Cognitives Détectées</strong><br>
@@ -552,15 +733,66 @@ with col_main:
                         actions_html = "".join([f'<div class="action-card">💡 {a}</div>' for a in msg['actions'][:3]])
                         st.markdown(f"<div>{actions_html}</div>", unsafe_allow_html=True)
     
-    # Quick Actions
+    # Quick Actions - Responsive
     st.markdown("#### 💡 Suggestions rapides")
-    quick_cols = st.columns(4)
+    # Adapter le nombre de colonnes selon la largeur d'écran
+    # Desktop: 4 colonnes, Tablet: 2 colonnes, Mobile: 1 colonne
+    quick_cols = st.columns([1, 1, 1, 1])  # Desktop
     quick_phrases = ["Je me sens triste", "Je suis stressé", "Ça va bien !", "J'ai besoin d'aide"]
     
     for i, phrase in enumerate(quick_phrases):
         with quick_cols[i]:
-            if st.button(phrase, key=f"quick_{i}"):
-                st.session_state.pending_input = phrase
+            if st.button(phrase, key=f"quick_{i}", use_container_width=True):
+                # Envoyer directement le message
+                current_time = datetime.now().strftime("%H:%M")
+                
+                # Ajouter message utilisateur
+                st.session_state.messages.append({
+                    'role': 'user',
+                    'content': phrase,
+                    'time': current_time
+                })
+                
+                # Traiter la réponse
+                sentiment_result = st.session_state.analyzer.analyze(phrase)
+                st.session_state.tracker.add_mood(
+                    text=phrase,
+                    sentiment=sentiment_result['sentiment'],
+                    confidence=sentiment_result['confidence']
+                )
+                
+                mood_trend = st.session_state.tracker.get_trend(7)
+                response = generate_response_with_gemini(
+                    sentiment_result=sentiment_result,
+                    phrase=phrase,
+                    mood_trend=mood_trend
+                )
+                
+                # Ajouter réponse bot
+                st.session_state.messages.append({
+                    'role': 'bot',
+                    'content': response.get('main_response', 'Je suis là pour toi.'),
+                    'sentiment': sentiment_result['sentiment_detail'],
+                    'confidence': sentiment_result['confidence'],
+                    'gemini_used': response.get('gemini_used', False),
+                    'distortions': response.get('distortions_list', []),
+                    'distortions_count': response.get('distortions_detected', 0),
+                    'actions': response.get('behavioral_actions', []),
+                    'advice': response.get('advice', []),
+                    'encouragement': response.get('encouragement', ''),
+                    'emergency': response.get('emergency_resources', []),
+                    'time': current_time
+                })
+                
+                st.session_state.mood_history.append({
+                    'timestamp': datetime.now(),
+                    'sentiment': sentiment_result['sentiment_detail'],
+                    'score': get_mood_score(sentiment_result['sentiment_detail']),
+                    'confidence': sentiment_result['confidence']
+                })
+                
+                # Rafraîchir l'interface
+                st.rerun()
     
     # Input Area - Barre de chat améliorée
     # Utiliser un formulaire pour permettre l'envoi avec Enter
@@ -603,11 +835,9 @@ with col_main:
             )
             
             mood_trend = st.session_state.tracker.get_trend(7)
-            response = st.session_state.generator.generate_response(
-                sentiment=sentiment_result['sentiment'],
-                sentiment_detail=sentiment_result['sentiment_detail'],
-                confidence=sentiment_result['confidence'],
-                text=user_input,
+            response = generate_response_with_gemini(
+                sentiment_result=sentiment_result,
+                phrase=user_input,
                 mood_trend=mood_trend
             )
             
@@ -616,8 +846,13 @@ with col_main:
                 'content': response.get('main_response', 'Je suis là pour toi.'),
                 'sentiment': sentiment_result['sentiment_detail'],
                 'confidence': sentiment_result['confidence'],
-                'distortions': response.get('distortions_detected', []),
+                'gemini_used': response.get('gemini_used', False),
+                'distortions': response.get('distortions_list', []),
+                'distortions_count': response.get('distortions_detected', 0),
                 'actions': response.get('behavioral_actions', []),
+                'advice': response.get('advice', []),
+                'encouragement': response.get('encouragement', ''),
+                'emergency': response.get('emergency_resources', []),
                 'time': current_time
             })
             
@@ -653,19 +888,29 @@ with col_side:
             st.rerun()
     with col_r2:
         if st.button("🗑️ Effacer", key="clear"):
+            # Effacer session + historique complet
             st.session_state.messages = []
             st.session_state.mood_history = []
+            # Effacer le fichier JSON pour remettre à zéro le total
+            st.session_state.tracker.mood_history = []
+            st.session_state.tracker.save_history()
             st.rerun()
     
     st.markdown("### 📊 Statistiques")
     
     stats = st.session_state.tracker.get_statistics()
     total_msgs = stats.get('total_messages', 0)
-    avg_mood = stats.get('average_mood', 0)
+    avg_mood = stats.get('mean_score', 0)  # Corrigé: mean_score au lieu de average_mood
     session_msgs = len([m for m in st.session_state.messages if m['role'] == 'user'])
-    cbt_count = sum(1 for m in st.session_state.messages if m.get('distortions'))
+    # CBT Count: Compter messages avec distorsions détectées
+    cbt_count = sum(1 for m in st.session_state.messages 
+                    if m.get('role') == 'bot' and (
+                        m.get('distortions') or 
+                        m.get('distortions_detected')
+                    ))
     
-    col1, col2 = st.columns(2)
+    # Responsive columns pour stats
+    col1, col2 = st.columns([1, 1])
     with col1:
         st.markdown(f"""
         <div class="stat-card">
@@ -834,7 +1079,8 @@ with st.sidebar:
     history_days = st.slider("Jours", 1, 30, 7)
     
     if st.button("📥 Charger historique"):
-        history = st.session_state.tracker.get_mood_history(days=history_days)
+        # Utiliser mood_history directement au lieu de get_mood_history()
+        history = st.session_state.tracker.mood_history if st.session_state.tracker.mood_history else []
         if history:
             st.success(f"✅ {len(history)} messages")
         else:

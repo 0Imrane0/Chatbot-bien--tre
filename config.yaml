@@ -3,7 +3,7 @@
 # ============================================
 
 # --- Approche à utiliser par défaut ---
-default_approach: "approach1"  # "approach1" ou "approach2"
+default_approach: "approach3"  # "approach1", "approach2" ou "approach3" ⭐ SÉLECTIONNÉE
 
 # --- Configuration Approche 1 (Transformers) ---
 approach1:

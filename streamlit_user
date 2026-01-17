@@ -1,0 +1,13 @@
+{
+  "created_at": "2026-01-17T12:15:48.990179",
+  "last_updated": "2026-01-17T12:15:48.990204",
+  "messages": [
+    {
+      "timestamp": "2026-01-17T12:15:48.990179",
+      "text": "Je suis stressé",
+      "sentiment": "negatif",
+      "confidence": 0.68,
+      "score": -0.5
+    }
+  ]
+}

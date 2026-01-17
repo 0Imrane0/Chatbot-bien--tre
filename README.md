@@ -1,475 +1,318 @@
-# 🤖 Chatbot de Bien-Être avec IA Avancée
+# 🧠 Chatbot Bien-être Mental - Approche 3 Hybride
 
-> **Chatbot intelligent combinant BERT fine-tuning et Thérapie Cognitivo-Comportementale (CBT)**
+**Chatbot intelligent combinant l'analyse de sentiment (BERT) avec la thérapie cognitivo-comportementale (CBT) et l'IA générative (Gemini).**
+
+Développé à **ENSA Berrechid** par **Salma Bouziane Ouaritini** et **Imrane Hajji** (ISIBD 2025-2026).
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
-[![BERT](https://img.shields.io/badge/Model-BERT%20110M-orange.svg)](https://huggingface.co)
-[![Precision](https://img.shields.io/badge/Precision-85%25-green.svg)]()
 [![Streamlit](https://img.shields.io/badge/Interface-Streamlit-red.svg)](https://streamlit.io)
+[![BERT](https://img.shields.io/badge/Model-BERT-orange.svg)](https://huggingface.co)
+[![Gemini](https://img.shields.io/badge/IA-Google%20Gemini-yellow.svg)](https://ai.google.dev/)
 
 ---
 
-## 🚀 Démarrage Ultra-Rapide
+## 🎯 Vue d'ensemble
 
-### ⚡ Windows (3 clics)
+Le **Chatbot Bien-être** est un assistant IA empathique qui :
+- **Écoute** les préoccupations émotionnelles
+- **Analyse** les sentiments en temps réel
+- **Détecte** les distorsions cognitives problématiques
+- **Répond** avec empathie et conseils thérapeutiques
+- **Suit** l'évolution émotionnelle dans le temps
 
-```
-1️⃣ setup.bat              → Créé l'environnement et installe tout
-2️⃣ download_models.bat    → Télécharge le modèle BERT
-3️⃣ launch_interface.bat   → Lance le chatbot !
-```
-
-**C'est tout !** Le navigateur s'ouvre automatiquement sur `http://localhost:8502`
-
-### ⚠️ IMPORTANT : Première Installation
-
-**Avant de lancer quoi que ce soit, tu DOIS exécuter :**
-
-```
-setup.bat ← Double-clique UNE SEULE FOIS
-```
-
-Cela crée l'environnement virtuel et installe toutes les dépendances (5-10 minutes).
-
-📖 **Plus de détails ?** Consulte [INSTALLATION.md](INSTALLATION.md)
+### ✨ Caractéristiques principales
+✅ Analyse de sentiment précise (5 catégories)  
+✅ Confiance dynamique (30-99%) basée sur le contexte  
+✅ Module CBT pour détection de distorsions cognitives  
+✅ Réponses personnalisées via Gemini (avec fallback intelligent)  
+✅ Historique persistant avec visualisations Plotly  
+✅ Confidentialité garantie (données stockées localement)  
+✅ Interface Web fluide et responsive (Streamlit)  
 
 ---
 
-## 📥 Process Complet (Première Fois)
+## 🚀 Démarrage rapide
 
-1. **Télécharge le repo**
-   ```bash
-   git clone https://github.com/0Imrane0/Chatbot-bien--tre.git
-   cd "Chatbot bien-être"
-   ```
+### Installation
 
-2. **Lance setup.bat** (crée l'environnement)
-   ```
-   Double-clique sur setup.bat ← ⭐ ESSENTIEL
-   ```
-   ⏳ Attendre 5-10 minutes
+```bash
+# Cloner/accéder au projet
+cd "Chatbot bien-être"
 
-3. **Lance download_models.bat** (télécharge BERT)
-   ```
-   Double-clique sur download_models.bat
-   ```
-   ⏳ Attendre 10-15 minutes
+# Créer environnement virtuel
+python -m venv .venv
 
-4. **Lance launch_interface.bat** (démarre le chatbot)
-   ```
-   Double-clique sur launch_interface.bat
-   ```
-   🎉 Le navigateur s'ouvre automatiquement !
+# Activer (Windows)
+.venv\Scripts\activate
 
-### 🚀 Fois Suivantes
+# Installer dépendances
+pip install -r requirements.txt
+```
 
-Juste clique sur `launch_interface.bat` - c'est tout !
+### Lancer l'application
+
+```bash
+streamlit run ui/streamlit_app.py
+```
+
+Accédez à : **http://localhost:8501**
 
 ---
 
-## ⚠️ Si tu as une erreur "No module named streamlit"
+## 🏗️ Architecture Approche 3
 
-❌ **Cause :** Tu n'as pas exécuté `setup.bat`
-
-✅ **Solution :** Double-clique sur `setup.bat` pour installer les dépendances
-
-📖 [Voir la section dépannage](INSTALLATION.md)
-
----
-
-## 📋 Menu Principal
-
-Une fois `menu.bat` lancé, tu as accès à:
+C'est un pipeline **Hybride** à 5 étapes :
 
 ```
-1) 🤖 Chatbot Approche 1 (Feature Extraction)
-2) 🤖 Chatbot Approche 3 (Fine-tuning)
-3) 📊 Comparer les Approches
-4) 🧠 Tester le Module CBT Complet
-5) 🧪 Test Rapide CBT
-6) 📄 Voir la Documentation
-7) 🏃 Quitter
-```
-
----
-
-## 🎯 Ce que fait ce Chatbot
-
-### ✅ Analyse d'Émotions
-- **Approche 1:** BERT Feature Extraction - Précision 82%
-- **Approche 3:** BERT Fine-tuning - Précision 85% (+3%)
-
-### ✅ Suivi d'Humeur
-- Historique conversationnel
-- Tendance d'humeur (amélioration/dégradation)
-- Statistiques personnalisées
-
-### ✅ Thérapie Cognitivo-Comportementale (CBT)
-Détecte et aide avec:
-- **Catastrophisation** ("toujours", "jamais", "horrible")
-- **Pensée Tout-ou-Rien** ("tout", "rien", "parfait")
-- **Surgénéralisation** ("je suis nul", "je suis un raté")
-- **Lecture de Pensées** ("il pense que...", "personne ne...")
-- **Raisonnement Émotionnel** ("je sens que...", "j'ai l'impression...")
-
-### ✅ Actions Concrètes
-Propose des exercices selon l'émotion:
-- **Dépression:** Promenade, musique, étirements
-- **Anxiété:** Respiration 4-7-8, technique 5-4-3-2-1
-- **Stress:** Pause, respiration, Pomodoro
-
-### ✅ Détection de Crise
-Identifie les mots-clés dangereux et redirige vers SOS Amitié
-
----
-
-## 📊 Résultats Mesurés
-
-### Impact du Module CBT
-
-**Avant CBT:**
-```
-"Je suis complètement nul, je rate toujours tout"
-→ "Les jours difficiles font partie de la vie. On est là ! 💪"
-   (57 caractères)
-```
-
-**Après CBT:**
-```
-"Je comprends que tu traverses un moment difficile...
-
-💭 Je remarque une pensée de type 'Catastrophisation' :
-Tu imagines le pire scénario possible.
-
-🤔 Réfléchissons ensemble :
-   1. Quelle est la probabilité réelle que le pire arrive ?
-   2. Qu'est-ce qui pourrait arriver de plus probable ?
-
-💡 Actions que tu peux essayer maintenant :
-   • Fais une promenade de 10 minutes en plein air
-   • Écoute 2-3 de tes chansons préférées"
-   (503 caractères)
-```
-
-**Amélioration: +782%** 🎉
-
-### Précision Sentiment
-| Configuration | Précision | Confiance |
-|---------------|-----------|-----------|
-| Approche 1 | 82% | 49.4% |
-| Approche 3 | 85% | 54.1% |
-| **Meilleur** | **Approche 3** | **+4.8%** |
-
-### Distorsions Détectées
-```
-Catastrophisation: 100% ✅
-Tout-ou-Rien: 100% ✅
-Surgénéralisation: 100% ✅
-Lecture de Pensées: 100% ✅
-Raisonnement Émotionnel: 100% ✅
-```
-
----
-
-## 🏗️ Architecture
-
-```
-User Input
+Message Utilisateur
     ↓
-Sentiment Analyzer (BERT)
+[1] SentimentAnalyzer (BERT/Keywords)
+    └─ Détecte: {sentiment, confidence}
     ↓
-Mood Tracker (Historique)
+[2] CBTEngine (Détection Distorsions)
+    └─ Scanne: {distortions, is_crisis}
     ↓
-CBT Engine (Distorsions)
+[3] MoodTracker (Persistance)
+    └─ Sauvegarde: JSON historique
     ↓
-Response Generator (Réponse enrichie)
+[4] ResponseGenerator
+    ├─ Plan A: Gemini API (réponse créative)
+    └─ Plan B: Templates (fallback)
+    └─ Retourne: {response, advice, encouragement}
     ↓
-User Output (Empathique + CBT + Actions)
+[5] UI Streamlit
+    └─ Affiche: Message + Graphiques + Stats
 ```
+
+### Les trois "cerveaux"
+
+| Composant | Rôle | Technologie |
+|-----------|------|-------------|
+| **BERT Fine-tuné** | Classification sentiment | Transformers NLP |
+| **CBT Engine** | Détection thérapeutique | Regex + Rules |
+| **Gemini** | Génération réponse | Google Cloud API |
 
 ---
 
-## 📁 Structure du Projet
+## 📂 Structure du projet
 
 ```
 Chatbot bien-être/
-├── menu.bat                      # Point d'entrée principal
-├── README.md                     # Ce fichier
-├── requirements.txt              # Dépendances
+├── README.md                    # Ce fichier
+├── requirements.txt             # Dépendances
+├── config.yaml                  # Configuration
+├── launch_interface.bat         # Lancer l'app
 │
 ├── src/
-│   ├── cbt_engine.py            # Module CBT (⭐ Core)
-│   ├── approach1/               # Feature Extraction
-│   │   ├── chatbot.py           # Interface conversationnelle
-│   │   ├── sentiment_analyzer.py
-│   │   ├── response_generator.py (avec CBT)
-│   │   ├── mood_tracker.py
-│   │   └── mood_visualizer.py
-│   └── approach3/               # Fine-tuning BERT
-│       ├── chatbot.py
-│       ├── sentiment_analyzer.py
-│       ├── response_generator.py (avec CBT)
-│       ├── mood_tracker.py
-│       └── mood_visualizer.py
+│   ├── cbt_engine.py           # 🧠 Module CBT
+│   ├── gemini_wrapper.py       # 💬 Wrapper Gemini
+│   │
+│   ├── approach1/              # Fallback (templates)
+│   │   ├── mood_tracker.py     # Persistance JSON
+│   │   ├── response_generator.py # Templates
+│   │   └── mood_visualizer.py  # Graphiques
+│   │
+│   └── approach3/              # ⭐ APPROCHE FINALE
+│       ├── chatbot.py          # WellbeingChatbot
+│       ├── sentiment_analyzer.py # BERT analysis
+│       ├── keyword_analyzer.py # Keywords
+│       ├── mood_tracker.py     # Tracking
+│       └── response_generator.py # Réponses
 │
-├── models/
-│   └── approach3/bert_finetuned/ # Modèle entraîné
+├── ui/
+│   ├── streamlit_app.py        # 🎨 Interface Web
+│   └── streamlit_test.py       # Tests UI
+│
+├── notebooks/
+│   ├── 01_exploration_data.ipynb
+│   ├── 02_finetuning_bert_gpu.ipynb
+│   └── Partie_1_MNIST.ipynb    # MNIST CNN
 │
 ├── data/
-│   ├── training_wellbeing_data.json    # Dataset (500 ex)
-│   ├── comparison_report.json
-│   └── mood_history.json
+│   ├── mood_history.json       # 💾 Historique
+│   ├── training_wellbeing_data.json
+│   └── mood_test.json
 │
-├── docs/                         # Documentation complète
-│   ├── RAPPORT_FINAL.md         # Rapport complet (LIS-MOI!)
-│   ├── CBT_README.md
-│   ├── CBT_INTEGRATION_SUMMARY.md
-│   ├── GPU_TRAINING_GUIDE.md
-│   └── ...
+├── models/
+│   └── approach3/
+│       ├── bert_finetuned/     # 🤖 BERT
+│       └── keyword_models/
 │
-├── tests/
-│   ├── test_cbt.py              # Tests complets
-│   ├── quick_test_cbt.py        # Test rapide
-│   └── compare_approaches.py    # Comparaison
+├── docs/                        # 📚 Documentation consolidée
+│   ├── 01_APPROACH3_COMPLETE_GUIDE.md
+│   ├── 02_CBT_MODULE_GUIDE.md
+│   ├── 03_INTERFACE_USER_GUIDE.md
+│   ├── 04_INSTALLATION_GUIDE.md
+│   └── 05_RAPPORT_FINAL_COMPLET.md
 │
-└── notebooks/                    # Jupyter notebooks
-    ├── 01_exploration_data.ipynb
-    └── 02_finetuning_bert_gpu.ipynb (Colab)
+├── comparison/                  # 🔬 Analyse comparative
+│   ├── compare_approaches.py
+│   ├── DEEP_ANALYSIS.md
+│   └── SYNTHESIS.py
+│
+└── tests/
+    └── (divers tests)
 ```
 
 ---
 
-## 🚀 Cas d'Usage
+## 🔑 Composants clés
 
-### Cas 1: Utilisateur Triste
-```
-👤: "Je suis triste, personne ne m'aime"
+### 1. **SentimentAnalyzer** (`src/approach3/sentiment_analyzer.py`)
+Analyse le sentiment en 5 catégories avec confiance :
+- **Très Positif** (+1.0)
+- **Positif** (+0.5)
+- **Neutre** (0.0)
+- **Négatif** (-0.5)
+- **Très Négatif** (-1.0)
 
-🤖: [Détecte sentiment NÉGATIF + distorsion "Lecture de Pensées"]
-   - Empathie validante
-   - Restructuration: "As-tu des preuves concrètes?"
-   - Actions: Appeler ami, méditation
-   - Résultat: Aide concrète +78% vs réponse simple
-```
+### 2. **CBTEngine** (`src/cbt_engine.py`)
+Détecte 5 distorsions cognitives (pensées fausses) :
+1. **Surgénéralisation** ("toujours raté")
+2. **Pensée Tout-ou-Rien** ("tout ou rien")
+3. **Lecture de pensées** ("il pense que...")
+4. **Raisonnement émotionnel** ("je sens = réalité")
+5. **Catastrophisation** ("terrible", "horrible")
 
-### Cas 2: Utilisateur Heureux
-```
-👤: "Je suis heureux, j'ai reçu mon diplôme!"
+### 3. **MoodTracker** (`src/approach1/mood_tracker.py`)
+Gère la persistance et statistiques :
+- Sauvegarde en JSON
+- Statistiques (moyenne, médiane, écart-type)
+- Tendances 7/14/30 jours
+- Détection patterns
 
-🤖: [Détecte sentiment TRÈS POSITIF]
-   - Célébration enthousiaste
-   - Encouragement à partager
-   - Conseils: profiter du moment
-```
+### 4. **GeminiChatbot** (`src/gemini_wrapper.py`)
+Wraps Google Gemini API :
+- Injection contexte thérapeutique
+- Gestion erreurs réseau
+- Détection situations critiques
 
-### Cas 3: Crise (Auto-nuisance)
-```
-👤: "Je veux en finir, je ne veux plus vivre"
-
-🤖: [Détecte CRISE]
-   ⚠️ ALERTE - Message d'urgence
-   Appelle SOS Amitié: 09 72 39 40 50
-   Numéro d'urgence: 112
-```
-
----
-
-## 🧠 Technologies
-
-### AI & NLP
-- **PyTorch 2.9.1** - Framework deep learning
-- **HuggingFace Transformers 4.57.5** - Modèles pré-entraînés
-- **BERT Multilingual** - Modèle de base
-
-### Entraînement
-- **Google Colab T4 GPU** - Pour fine-tuning gratuit
-- **HuggingFace Trainer** - Entraînement standardisé
-- **Accelerate 1.12.0** - Optimisation
-
-### Données & Analyse
-- **Pandas** - Manipulation données
-- **Matplotlib/Seaborn** - Visualisations
-- **NumPy** - Calculs numériques
-
-### Python
-- **Python 3.13**
-- **Virtual Environment** - Isolation dépendances
+### 5. **Streamlit App** (`ui/streamlit_app.py`)
+Interface Web interactive :
+- Chat temps réel
+- Historique messages
+- Graphiques Plotly (évolution + distribution)
+- Statistiques en direct
 
 ---
 
-## 📚 Documentation Complète
+## 💾 Gestion des données
 
-**LECTURE OBLIGATOIRE:**
-- [RAPPORT_FINAL.md](docs/RAPPORT_FINAL.md) - Vue d'ensemble technique complète
-
-**Guides Supplémentaires:**
-- [CBT_README.md](docs/CBT_README.md) - Guide Module CBT
-- [CBT_INTEGRATION_SUMMARY.md](docs/CBT_INTEGRATION_SUMMARY.md) - Résumé technique
-- [GPU_TRAINING_GUIDE.md](docs/GPU_TRAINING_GUIDE.md) - Entraînement GPU
-- [COMPARISON_IDEAS.md](docs/COMPARISON_IDEAS.md) - Comparaisons avancées
-
----
-
-## 🧪 Tests
-
-### Test Complet du Module CBT
-```bash
-python test_cbt.py
-```
-8 cas de test, détection de distorsions, comparaison avec/sans CBT
-
-### Test Rapide
-```bash
-python quick_test_cbt.py
-```
-Comparaison rapide du même phrase avec/sans CBT
-
-### Comparer Approches 1 & 3
-```bash
-python compare_approaches.py
-```
-Teste les 2 approches de sentiment analysis côte à côte
-
----
-
-## 💻 Installation
-
-### Prérequis
-```bash
-Python 3.10+
-pip
+### Historique (format JSON)
+```json
+{
+  "user_id": "default_user",
+  "mood_history": [
+    {
+      "timestamp": "2026-01-15T18:00:00",
+      "text": "Je suis nul...",
+      "sentiment": "très négatif",
+      "confidence": 0.96,
+      "score": -1.0
+    }
+  ]
+}
 ```
 
-### Étapes
-```bash
-# 1. Cloner le projet
-git clone <repo>
-cd Chatbot\ bien-être
+### Confidentialité
+✅ Données stockées localement (`data/mood_history.json`)  
+✅ Aucun upload (sauf contexte anonymisé à Gemini)  
+✅ Suppression instantanée possible  
 
-# 2. Créer environnement virtuel (optionnel mais recommandé)
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-source .venv/bin/activate  # Linux/Mac
+---
 
-# 3. Installer dépendances
-pip install -r requirements.txt
+## 🧪 Exemple du pipeline
 
-# 4. C'est prêt!
-menu.bat
+**Input :** "Je suis nul, personne ne m'aime, je rate toujours tout"
+
+**Processus :**
+1. **Sentiment** → Détecté "Très Négatif" (96%)
+2. **CBT** → Identifie:
+   - ⚠️ Surgénéralisation ("toujours")
+   - ⚠️ Lecture de pensée ("personne ne m'aime")
+   - ⚠️ Étiquetage ("je suis nul")
+3. **Tracking** → Enregistré dans mood_history.json
+4. **Gemini** → Génère réponse empathique guidée par le contexte CBT
+5. **UI** → Affiche réponse + tags distorsions + conseils
+
+---
+
+## 📦 Dépendances principales
+
+```
+streamlit==1.52.2              # Interface Web
+plotly==5.17.0                 # Graphiques interactifs
+google-generativeai==1.58.0    # Gemini API
+transformers==4.30.0           # BERT
+torch==2.0.0                   # PyTorch
+numpy==1.24.0
+pandas==2.0.0
+pyyaml==6.0
 ```
 
----
-
-## 🎓 Concepts Clés
-
-### BERT (Bidirectional Encoder Representations from Transformers)
-- Modèle de transformer pré-entraîné
-- Comprend le contexte bidirectionnel
-- Approche 1: Utilise poids gelés (feature extraction)
-- Approche 3: Fine-tune tous les poids
-
-### Fine-tuning
-- Adapter un modèle pré-entraîné à ta tâche spécifique
-- Besoin: Dataset de 500 exemples bien-être
-- Résultat: +3% de précision pour bien-être
-- Temps: 3 minutes avec GPU
-
-### CBT (Thérapie Cognitivo-Comportementale)
-- Approche psychologique validée scientifiquement
-- Basée sur: Pensées → Émotions → Comportements
-- Notre approche: Détecter pensées négatives + restructurer
-- Impact: +800% d'enrichissement des réponses
-
-### Sentiment Analysis
-Classifier du texte en catégories émotionnelles
-- Approche 1: 3 classes (négatif/neutre/positif)
-- Approche 3: 5 classes (détail plus fin)
+Voir `requirements.txt` pour la liste complète.
 
 ---
 
-## 🏆 Points Forts du Projet
+## ❓ FAQ
 
-✅ **Innovation:** Intégration CBT dans chatbot IA (rare!)
-✅ **Scientifiquement basé:** CBT validée par recherche
-✅ **Pratique:** Actions concrètes proposées
-✅ **Bien testé:** 8 cas de test complets
-✅ **Facile d'usage:** Menu interactif simple
-✅ **Documentation:** Rapport complet inclus
-✅ **Flexible:** 2 approches BERT au choix
-✅ **Éthique:** Détection de crise + redirection professionnels
+**Q: Que se passe-t-il si Gemini ne fonctionne pas ?**  
+R: Bascule automatique en mode Fallback avec templates pré-rédigés.
 
----
+**Q: Où sont stockées les données utilisateur ?**  
+R: Localement dans `data/mood_history.json` - aucun serveur externe.
 
-## ⚠️ Limitations & Éthique
+**Q: Peut-on utiliser sans clé API Gemini ?**  
+R: Oui, en mettant `use_gemini=False` dans `src/approach3/chatbot.py`.
 
-### ⚠️ Important
-Ce chatbot est un **outil de bien-être**, **PAS un remplacement** pour:
-- Thérapie professionnelle
-- Psychiatrie
-- Traitement médical
+**Q: Comment ajouter une nouvelle distorsion CBT ?**  
+R: Éditer `src/cbt_engine.py`, ajouter pattern regex + keywords.
 
-### Détection de Crise
-Le chatbot détecte automatiquement et redirige:
-```
-Mots-clés: suicide, mourir, me tuer, en finir
-Action: ⚠️ Message d'urgence + numéro SOS
-```
-
-### Redirection
-**SOS Amitié:** 09 72 39 40 50 (24h/24)
-**Numéro d'urgence:** 112
+**Q: Quel est le coût d'utilisation ?**  
+R: Gratuit (sauf si Gemini API quotas dépassés). L'app fonctionne aussi hors-ligne avec fallbacks.
 
 ---
 
-## 🚀 Prochaines Étapes (Optionnel)
+## 📚 Documentation détaillée
 
-- [ ] Tracker distorsions dans le temps
-- [ ] Journal de pensées structuré (format CBT)
-- [ ] Visualisations de progression
-- [ ] Application mobile
-- [ ] Intégration API médicale
-- [ ] Support multi-langue
+Voir le dossier **`docs/`** :
+- `01_APPROACH3_COMPLETE_GUIDE.md` - Guide technique complet (approche hybride BERT + Gemini)
+- `02_CBT_MODULE_GUIDE.md` - Module thérapeutique (distorsions, restructuration, actions)
+- `03_INTERFACE_USER_GUIDE.md` - Guide utilisateur de l'interface Streamlit
+- `04_INSTALLATION_GUIDE.md` - Installation, modèles, GPU, troubleshooting
+- `05_RAPPORT_FINAL_COMPLET.md` - Rapport final consolidé
 
----
-
-## 📞 Support
-
-**Questions sur le fonctionnement?**
-1. Consulte `docs/RAPPORT_FINAL.md`
-2. Lance les tests: `python test_cbt.py`
-3. Essaie le chatbot: sélection 1 dans menu.bat
+Voir le dossier **`comparison/`** :
+- `compare_approaches.py` - Benchmark Approche 1 vs 3
+- `DEEP_ANALYSIS.md` - Résultats détaillés
+- `SYNTHESIS.py` - Synthèse comparative
 
 ---
 
-## 📄 Licence & Attributions
+## 👥 Contributeurs
 
-**Modèles Utilisés:**
-- BERT: Google (licence Apache 2.0)
-- Fine-tuning data: Créé personnalisé
-- CBT concepts: Psychology research
+- **Salma Bouziane Ouaritini** (ENSA Berrechid, ISIBD 2026)
+- **Imrane Hajji** (ENSA Berrechid, ISIBD 2026)
 
-**Frameworks:**
-- PyTorch: Meta
-- HuggingFace: HuggingFace Team
-- All open source (Apache 2.0, MIT)
+**Superviseur académique :** M. Lahcen MOUMOUN
 
 ---
 
-## ✨ Prêt à Tester?
+## 📄 Licence
 
-```bash
-menu.bat
-```
-
-Sélectionne option **1** pour lancer le chatbot et essaie:
-> "Je suis complètement nul, je rate toujours tout"
-
-Vois la magie du CBT en action! 🎉
+Projet éducatif pour ENSA Berrechid, cursus ISIBD.
 
 ---
 
-**Créé:** Janvier 2026
-**Statut:** ✅ Complet et Fonctionnel
-**Version:** 1.0
+## 🔗 Ressources utiles
 
-Bon test! 🚀
+- [Documentation Streamlit](https://docs.streamlit.io/)
+- [Transformers HuggingFace](https://huggingface.co/docs/transformers/)
+- [Google Gemini API](https://ai.google.dev/)
+- [CBT: Thérapie Cognitivo-Comportementale](https://fr.wikipedia.org/wiki/Th%C3%A9rapie_cognitivo-comportementale)
+- [BERT & NLP](https://huggingface.co/docs/transformers/model_doc/bert)
+
+---
+
+**Dernière mise à jour :** 17 janvier 2026  
+**Version :** Approche 3 Hybride (Production-Ready)

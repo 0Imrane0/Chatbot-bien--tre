@@ -94,7 +94,9 @@ class MoodTracker:
                 'positif': 0.5,
                 'neutre': 0.0,
                 'négatif': -0.5,
-                'très négatif': -1.0
+                'negatif': -0.5,  # Version sans accent
+                'très négatif': -1.0,
+                'tres negatif': -1.0  # Version sans accent
             }
             score = score_mapping.get(sentiment, 0.0)
         

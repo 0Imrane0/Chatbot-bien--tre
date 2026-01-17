@@ -1,5 +1,5 @@
 # ============================================
-# DÉPENDANCES - APPROCHE 1 (Prioritaire)
+# DÉPENDANCES - APPROCHE 1 et 3 (Prioritaire)
 # ============================================
 
 # --- Deep Learning et NLP ---

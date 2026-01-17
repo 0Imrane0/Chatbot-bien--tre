@@ -326,6 +326,11 @@ class ResponseGenerator:
         
         # Étape 1 : DÉTECTION DE CRISE
         is_crisis = self._detect_crisis(text)
+        # Si crise détectée, on force un encodage très négatif pour éviter de rater l'alerte
+        if is_crisis:
+            sentiment_detail = 'très négatif'
+            sentiment = 'négatif'
+            confidence = max(confidence, 0.9)
         
         # ========================================
         # ÉTAPE CBT : ANALYSE AVEC MODULE CBT

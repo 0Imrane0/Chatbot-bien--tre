@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from approach3.sentiment_finetuner import BERTFineTuner
+from approach3.keyword_analyzer import KeywordSentimentAnalyzer
 
 
 class SentimentAnalyzer:
@@ -39,56 +40,78 @@ class SentimentAnalyzer:
         print("🤖 Initialisation du Sentiment Analyzer (Approche 3)...")
         print(f"   Chemin du modèle: {model_dir}")
         
-        # Charger le modèle - d'abord essayer le modèle local, sinon utiliser BERT base
-        try:
-            if Path(model_dir).exists():
-                print(f"🔧 Chargement depuis répertoire local...")
-                self.finetuner = BERTFineTuner(
-                    model_name=model_dir,  # Charger depuis répertoire local
-                    output_dir=model_dir
-                )
-            else:
-                # Fallback: utiliser BERT base depuis le cache
-                print(f"⚠️  Répertoire local non trouvé, utilisation de BERT base-uncased...")
-                self.finetuner = BERTFineTuner(
-                    model_name="bert-base-uncased",  # Utiliser depuis cache Hugging Face
-                    output_dir=model_dir
-                )
-        except Exception as e:
-            print(f"❌ Erreur lors du chargement: {e}")
-            print(f"   Utilisation de BERT base-uncased...")
-            self.finetuner = BERTFineTuner(
-                model_name="bert-base-uncased",
-                output_dir=model_dir
-            )
+        self.finetuner = None
+        self.keyword_analyzer = KeywordSentimentAnalyzer()
+        self.use_bert = False
         
-        print("✅ Sentiment Analyzer prêt! (BERT fine-tuné)")
+        # Essayer de charger le modèle BERT fine-tuné si disponible
+        try:
+            if Path(model_dir).exists() and (Path(model_dir) / 'pytorch_model.bin').exists():
+                print(f"🔧 Chargement depuis répertoire local (BERT fine-tuné)...")
+                self.finetuner = BERTFineTuner(
+                    model_name=model_dir,
+                    output_dir=model_dir
+                )
+                self.use_bert = True
+                print("✅ BERT fine-tuné chargé!")
+            else:
+                print(f"⚠️  Modèle fine-tuné non disponible.")
+                print(f"   Utilisation de l'analyseur basé sur dictionnaire...")
+        except Exception as e:
+            print(f"❌ Erreur BERT: {e}")
+            print(f"   Basculement vers analyseur par dictionnaire...")
+        
+        print("✅ Sentiment Analyzer prêt! (Analyseur par dictionnaire)")
     
     def analyze(self, text: str) -> Dict:
         """
         Analyse le sentiment d'un texte
+        
+        Utilise:
+        - BERT fine-tuné si disponible
+        - Sinon: analyseur basé sur dictionnaire de mots-clés
         
         Args:
             text (str): Texte à analyser
             
         Returns:
             dict: Résultat de l'analyse avec:
-                - sentiment: Sentiment principal (très négatif → très positif)
-                - sentiment_detail: Détail du sentiment
+                - sentiment: Sentiment principal (négatif, neutre, positif)
+                - sentiment_detail: Détail du sentiment (5 niveaux)
                 - confidence: Confiance (0-1)
                 - scores: Tous les scores par sentiment
         """
         
-        # Prédire avec BERT fine-tuné
-        result = self.finetuner.predict(text)
+        # Utiliser BERT si disponible et bien entraîné
+        if self.use_bert and self.finetuner:
+            try:
+                result = self.finetuner.predict(text)
+                # Vérifier que ce n'est pas des scores aléatoires
+                # (scores uniformes = pas entraîné)
+                scores = result['all_scores']
+                std_dev = (
+                    (sum((v - 0.2)**2 for v in scores.values()) / len(scores)) ** 0.5
+                )
+                if std_dev > 0.05:  # Si écart-type > 0.05, le modèle est OK
+                    return {
+                        'sentiment': self._map_sentiment_to_category(result['sentiment']),
+                        'sentiment_detail': result['sentiment'],
+                        'confidence': result['confidence'],
+                        'scores': result['all_scores'],
+                        'approach': 'BERT fine-tuned'
+                    }
+            except Exception as e:
+                print(f"⚠️  BERT erreur: {e}, basculement vers dictionnaire")
+                self.use_bert = False
         
-        # Restructurer pour compatibilité avec Approche 1
+        # Fallback: analyseur par dictionnaire (plus fiable que BERT non-entraîné)
+        result = self.keyword_analyzer.analyze(text)
         return {
-            'sentiment': self._map_sentiment_to_category(result['sentiment']),
-            'sentiment_detail': result['sentiment'],
+            'sentiment': result['sentiment'],
+            'sentiment_detail': result['sentiment_detail'],
             'confidence': result['confidence'],
-            'scores': result['all_scores'],
-            'approach': 'fine-tuning'
+            'scores': result['scores'],
+            'approach': 'keyword-based (dictionnaire)'
         }
     
     def _map_sentiment_to_category(self, detailed_sentiment: str) -> str:
